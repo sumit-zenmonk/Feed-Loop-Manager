@@ -3,10 +3,10 @@
 import { useEffect, useState } from "react"
 import { Dialog, DialogTitle, DialogContent, Card, CardContent, Typography, Box, Button, Stack } from "@mui/material"
 import InfiniteScroll from "react-infinite-scroll-component"
-import { useAppDispatch, useAppSelector } from "@/redux/hooks"
 import { RootState } from "@/redux/store"
 import { fetchhiddenFeedbacks, enableDisableFeedback } from "@/redux/feature/admin/user/user-action"
 import { enqueueSnackbar } from "notistack"
+import { useAppDispatch, useAppSelector } from "@/redux/hooks.ts"
 
 export default function InactiveFeedbackModal({
     open,

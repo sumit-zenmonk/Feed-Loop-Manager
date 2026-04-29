@@ -21,7 +21,11 @@ export class FeedbackRepository extends Repository<FeedbackEntity> {
                 uuid: uuid
             },
             relations: {
-                comments: true,
+                comments: {
+                    user: true,
+                    parent: true,
+                    feedback: true,
+                },
                 creator: true,
                 votes: true,
                 tags: true,
@@ -38,7 +42,11 @@ export class FeedbackRepository extends Repository<FeedbackEntity> {
                 creator_uuid: creator_uuid
             },
             relations: {
-                comments: true,
+                comments: {
+                    user: true,
+                    parent: true,
+                    feedback: true,
+                },
                 creator: true,
                 votes: true,
                 tags: true,
@@ -58,7 +66,11 @@ export class FeedbackRepository extends Repository<FeedbackEntity> {
                 creator_uuid: user_uuid
             },
             relations: {
-                comments: true,
+                comments: {
+                    user: true,
+                    parent: true,
+                    feedback: true,
+                },
                 creator: true,
                 votes: true,
                 tags: true,
@@ -76,7 +88,11 @@ export class FeedbackRepository extends Repository<FeedbackEntity> {
                 is_disabled_by_admin: false
             },
             relations: {
-                comments: true,
+                comments: {
+                    user: true,
+                    parent: true,
+                    feedback: true,
+                },
                 creator: true,
                 votes: true,
                 tags: true,
@@ -94,7 +110,11 @@ export class FeedbackRepository extends Repository<FeedbackEntity> {
                 is_disabled_by_admin: true
             },
             relations: {
-                comments: true,
+                comments: {
+                    user: true,
+                    parent: true,
+                    feedback: true,
+                },
                 creator: true,
                 votes: true,
                 tags: true,

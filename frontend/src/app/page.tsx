@@ -88,13 +88,12 @@ export default function Page() {
           onChange={(e) => setTagFilter(e.target.value)}
         />
 
-        <Button
-          variant="contained"
-          color="secondary"
+        {user?.role == UserRoleEnum.ADMIN && <Button
+          variant="outlined"
           onClick={() => setOpenModal(true)}
         >
           View Hidden Feedbacks
-        </Button>
+        </Button>}
       </Box>
 
       <InfiniteScroll
@@ -159,25 +158,29 @@ export default function Page() {
                     View
                   </Button>
 
-                  <Button
-                    onClick={() => handleVote(fb.uuid, FeedbackVoteEnum.UPVOTE)}
-                    sx={{
-                      fontWeight: myVote === FeedbackVoteEnum.UPVOTE ? "bold" : "normal",
-                      color: myVote === FeedbackVoteEnum.UPVOTE ? "green" : "gray"
-                    }}
-                  >
-                    Upvote
-                  </Button>
+                  {user?.role == UserRoleEnum.USER &&
+                    <>
+                      < Button
+                        onClick={() => handleVote(fb.uuid, FeedbackVoteEnum.UPVOTE)}
+                        sx={{
+                          fontWeight: myVote === FeedbackVoteEnum.UPVOTE ? "bold" : "normal",
+                          color: myVote === FeedbackVoteEnum.UPVOTE ? "green" : "gray"
+                        }}
+                      >
+                        Upvote
+                      </Button>
 
-                  <Button
-                    onClick={() => handleVote(fb.uuid, FeedbackVoteEnum.DEVOTE)}
-                    sx={{
-                      fontWeight: myVote === FeedbackVoteEnum.DEVOTE ? "bold" : "normal",
-                      color: myVote === FeedbackVoteEnum.DEVOTE ? "red" : "gray"
-                    }}
-                  >
-                    Devote
-                  </Button>
+                      <Button
+                        onClick={() => handleVote(fb.uuid, FeedbackVoteEnum.DEVOTE)}
+                        sx={{
+                          fontWeight: myVote === FeedbackVoteEnum.DEVOTE ? "bold" : "normal",
+                          color: myVote === FeedbackVoteEnum.DEVOTE ? "red" : "gray"
+                        }}
+                      >
+                        Devote
+                      </Button>
+                    </>
+                  }
                 </Box>
 
                 <Box className={styles.footer}>
@@ -197,7 +200,7 @@ export default function Page() {
             </Card>
           )
         })}
-      </InfiniteScroll>
+      </InfiniteScroll >
 
       <InactiveFeedbackModal
         open={openModal}

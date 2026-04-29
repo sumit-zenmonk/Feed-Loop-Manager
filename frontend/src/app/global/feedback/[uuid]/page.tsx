@@ -1,16 +1,18 @@
 "use client";
 
-import { Card, CardContent, Typography, Stack, Box, Button, Modal, } from "@mui/material";
+import { Card, CardContent, Typography, Stack, Box, Button, Modal, Collapse, Divider } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks.ts";
 import { RootState } from "@/redux/store";
 import { useParams, useRouter } from "next/navigation";
 import styles from "./feedback.module.css";
-import { updateUserFeedbackVote } from "@/redux/feature/user/feedback/feedback-action";
+import { updateUserFeedbackVote, createUserFeedbackComment, deleteUserFeedbackComment } from "@/redux/feature/user/feedback/feedback-action";
 import { fetchSpecificFeedback } from "@/redux/feature/global/feedback/feedback-action";
 import { enqueueSnackbar } from "notistack";
 import { useState } from "react";
 import { FeedbackVoteEnum } from "@/enums/feedback";
-import { enableDisableFeedback } from "@/redux/feature/admin/user/user-action"
+import { enableDisableFeedback } from "@/redux/feature/admin/user/user-action";
+import NestedComments from "@/component/nested-comment-comp/nested-comment-comp";
+import { UserRoleEnum } from "@/enums/user";
 
 export default function GlobalFeedbackPage() {
     const { feedbacks: userFeedbacks } = useAppSelector((state: RootState) => state.UserfeedbackReducer);
@@ -21,6 +23,7 @@ export default function GlobalFeedbackPage() {
     const feedbackId = Array.isArray(uuid) ? uuid[0] : uuid;
     const router = useRouter();
     const [open, setOpen] = useState(false);
+    const [doExpand, setDoExpand] = useState<boolean>(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
     const [userVotes, setUserVotes] = useState<Record<string, FeedbackVoteEnum | undefined>>({});
@@ -72,6 +75,44 @@ export default function GlobalFeedbackPage() {
         }
     }
 
+    const handleAddComment = async (feedback_uuid: string, text: string, parentUuid?: string) => {
+        try {
+            if (!user) {
+                enqueueSnackbar("login first", { variant: "error" });
+                return;
+            }
+
+            if (!text.trim()) {
+                enqueueSnackbar("empty comment", { variant: "error" });
+                return;
+            }
+
+            await dispatch(createUserFeedbackComment({
+                feedback_uuid,
+                user_uuid: user!.uid,
+                comment: text,
+                comment_parent_uuid: parentUuid
+            })).unwrap()
+
+            await dispatch(fetchSpecificFeedback({ uuid: feedback_uuid }))
+        } catch (err: any) {
+            enqueueSnackbar(err, { variant: "error" })
+        }
+    }
+
+    const handleDeleteComment = async (uuid: string) => {
+        try {
+            if (!user) {
+                enqueueSnackbar("login first", { variant: "error" });
+                return;
+            }
+
+            await dispatch(deleteUserFeedbackComment({ uuid })).unwrap()
+        } catch (err: any) {
+            enqueueSnackbar(err, { variant: "error" })
+        }
+    }
+
     return (
         <Box className={styles.container}>
             <Card className={styles.card}>
@@ -113,30 +154,43 @@ export default function GlobalFeedbackPage() {
                     </Box>
 
                     <Box className={styles.actionButtons}>
-                        <Button
-                            onClick={() => handleVote(specific_feedback.uuid, FeedbackVoteEnum.UPVOTE)}
-                            sx={{
-                                fontWeight: myVote === FeedbackVoteEnum.UPVOTE ? "bold" : "normal",
-                                color: myVote === FeedbackVoteEnum.UPVOTE ? "green" : "gray"
-                            }}
-                        >
-                            Upvote
-                        </Button>
+
+                        {user?.role == UserRoleEnum.USER &&
+                            <>
+                                <Button
+                                    onClick={() => handleVote(specific_feedback.uuid, FeedbackVoteEnum.UPVOTE)}
+                                    sx={{
+                                        fontWeight: myVote === FeedbackVoteEnum.UPVOTE ? "bold" : "normal",
+                                        color: myVote === FeedbackVoteEnum.UPVOTE ? "green" : "gray"
+                                    }}
+                                >
+                                    Upvote
+                                </Button>
+
+                                <Button
+                                    onClick={() => handleVote(specific_feedback.uuid, FeedbackVoteEnum.DEVOTE)}
+                                    sx={{
+                                        fontWeight: myVote === FeedbackVoteEnum.DEVOTE ? "bold" : "normal",
+                                        color: myVote === FeedbackVoteEnum.DEVOTE ? "red" : "gray"
+                                    }}
+                                >
+                                    Devote
+                                </Button>
+                            </>
+                        }
+
+                        {user?.role == UserRoleEnum.ADMIN &&
+                            <Button
+                                onClick={() => handleEnableDisableFeedback(specific_feedback.uuid)}
+                            >
+                                Hide Feedback
+                            </Button>
+                        }
 
                         <Button
-                            onClick={() => handleVote(specific_feedback.uuid, FeedbackVoteEnum.DEVOTE)}
-                            sx={{
-                                fontWeight: myVote === FeedbackVoteEnum.DEVOTE ? "bold" : "normal",
-                                color: myVote === FeedbackVoteEnum.DEVOTE ? "red" : "gray"
-                            }}
+                            onClick={() => setDoExpand((prev) => !prev)}
                         >
-                            Devote
-                        </Button>
-
-                        <Button
-                            onClick={() => handleEnableDisableFeedback(specific_feedback.uuid)}
-                        >
-                            Hide Feedback
+                            {doExpand ? "Hide" : "View"} Comments
                         </Button>
 
                         <Button onClick={handleOpen}>View Voters</Button>
@@ -170,6 +224,21 @@ export default function GlobalFeedbackPage() {
                         </Box>
                     </Modal>
 
+                    <Collapse in={doExpand}>
+                        <Divider />
+                        <Box>
+                            <NestedComments
+                                comments={specific_feedback.comments || []}
+                                currentUser={{
+                                    uuid: user?.uid || "",
+                                    name: user?.name || "User",
+                                    email: user?.email || "User",
+                                }}
+                                onAdd={(text, parentUuid) => handleAddComment(specific_feedback.uuid, text, parentUuid)}
+                                onDelete={handleDeleteComment}
+                            />
+                        </Box>
+                    </Collapse>
                 </CardContent>
             </Card>
         </Box>

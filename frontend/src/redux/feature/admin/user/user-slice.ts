@@ -5,6 +5,8 @@ import { UserState } from "./user-type"
 import { enableDisableUser, fetchUsers, fetchhiddenFeedbacks } from "./user-action"
 
 const initialState: UserState = {
+    hidden_feedbacks: [],
+    total_hidden_feedbacks: 0,
     users: [],
     total_users: 0,
     loading: false,

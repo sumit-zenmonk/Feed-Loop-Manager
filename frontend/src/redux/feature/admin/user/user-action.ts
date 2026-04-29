@@ -2,7 +2,7 @@
 
 import { createAsyncThunk } from "@reduxjs/toolkit"
 import { RootState } from "@/redux/store"
-import { FetchUsersResponse } from "./user-type"
+import { FetchhiddenFeedbackResponse, FetchUsersResponse } from "./user-type"
 
 const API_URL = process.env.NEXT_PUBLIC_BACKEND_API_URL
 

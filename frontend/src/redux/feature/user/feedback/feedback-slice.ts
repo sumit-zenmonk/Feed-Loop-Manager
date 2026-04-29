@@ -2,7 +2,7 @@
 
 import { createSlice } from "@reduxjs/toolkit"
 import { FeedbackState } from "./feedback-type"
-import { createUserFeedback, deleteUserFeedback, fetchUserFeedbacks, updateUserFeedback, } from "./feedback-action"
+import { createUserFeedback, createUserFeedbackComment, deleteUserFeedback, deleteUserFeedbackComment, fetchUserFeedbacks, updateUserFeedback, } from "./feedback-action"
 import { fetchSpecificFeedback } from "../../global/feedback/feedback-action"
 
 const initialState: FeedbackState = {
@@ -117,6 +117,43 @@ const feedbackSlice = createSlice({
             .addCase(fetchSpecificFeedback.rejected, (state, action) => {
                 state.loading = false
                 state.status = "rejected"
+                state.error = action.payload as string
+            })
+            .addCase(createUserFeedbackComment.pending, (state) => {
+                state.loading = true
+            })
+            .addCase(createUserFeedbackComment.fulfilled, (state, action) => {
+                state.loading = false
+                const newComment = action.payload?.[0]
+                if (!newComment) return
+
+                const feedbackIndex = state.feedbacks.findIndex(
+                    (f) => f.uuid === newComment.feedback_uuid
+                )
+
+                if (feedbackIndex !== -1) {
+                    state.feedbacks[feedbackIndex].comments.push(newComment)
+                }
+            })
+            .addCase(createUserFeedbackComment.rejected, (state, action) => {
+                state.loading = false
+                state.error = action.payload as string
+            })
+            .addCase(deleteUserFeedbackComment.pending, (state) => {
+                state.loading = true
+            })
+            .addCase(deleteUserFeedbackComment.fulfilled, (state, action) => {
+                state.loading = false
+                const { uuid } = action.payload
+
+                state.feedbacks.forEach((feedback) => {
+                    feedback.comments = feedback.comments.filter(
+                        (c: any) => c.uuid !== uuid
+                    )
+                })
+            })
+            .addCase(deleteUserFeedbackComment.rejected, (state, action) => {
+                state.loading = false
                 state.error = action.payload as string
             })
     },
