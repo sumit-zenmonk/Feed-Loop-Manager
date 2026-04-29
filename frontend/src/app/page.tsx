@@ -69,14 +69,13 @@ export default function Page() {
     }
   }
   const filteredFeedbacks = tagFilter
-  ? feedbacks.filter((fb: Feedback) =>
-    fb.tags.some((tag: any) =>
-      tag.tag_name.toLowerCase().includes(tagFilter.toLowerCase())
-)
-)
-: feedbacks
+    ? feedbacks.filter((fb: Feedback) =>
+      fb.tags.some((tag: any) =>
+        tag.tag_name.toLowerCase().includes(tagFilter.toLowerCase())
+      )
+    )
+    : feedbacks
 
-console.log(filteredFeedbacks);
   return (
     <>
       <Box sx={{ p: 2 }}>
@@ -95,77 +94,99 @@ console.log(filteredFeedbacks);
         loader={<h4>Loading...</h4>}
         height={900}
       >
-        {filteredFeedbacks?.map((fb: Feedback) => (
-          <Card key={fb.uuid} className={styles.card}>
-            <CardContent className={styles.content}>
-              <Box className={styles.header}>
-                <Typography variant="h5" className={styles.title}>
-                  {fb.title}
-                </Typography>
+        {filteredFeedbacks?.map((fb: Feedback) => {
+          const myVote =
+            userVotes[fb.uuid] ??
+            fb.votes.find(v => v.user_uuid === user?.uid)?.vote_type;
 
-                <Typography className={styles.status}>
-                  {fb.status}
-                </Typography>
-              </Box>
+          const score = fb.votes.reduce((acc, v) => {
+            if (v.vote_type === FeedbackVoteEnum.UPVOTE) return acc + 1;
+            if (v.vote_type === FeedbackVoteEnum.DEVOTE) return acc - 1;
+            return acc;
+          }, 0);
 
-              <Box className={styles.section}>
-                <Typography className={styles.sectionTitle}>
-                  Description
-                </Typography>
+          return (
+            <Card key={fb.uuid} className={styles.card}>
+              <CardContent className={styles.content}>
+                <Box className={styles.header}>
+                  <Typography variant="h5" className={styles.title}>
+                    {fb.title}
+                  </Typography>
 
-                <Typography className={styles.description}>
-                  {fb.description}
-                </Typography>
-              </Box>
-
-              <Box className={styles.section}>
-                <Typography className={styles.sectionTitle}>
-                  Tags
-                </Typography>
-
-                <Box className={styles.tagsContainer}>
-                  {fb.tags.map((tag: any) => (
-                    <Box key={tag.uuid} className={styles.tag}>
-                      <Typography className={styles.tagText}>
-                        {tag.tag_name}
-                      </Typography>
-                    </Box>
-                  ))}
+                  <Typography className={styles.status}>
+                    {fb.status}
+                  </Typography>
                 </Box>
-              </Box>
 
-              <Box className={styles.actionButtons}>
-                <Button
-                  onClick={() => router.push(`/global/feedback/${fb.uuid}`)}
-                >
-                  View
-                </Button>
+                <Box className={styles.section}>
+                  <Typography className={styles.sectionTitle}>
+                    Description
+                  </Typography>
 
-                <Button
-                  onClick={() => handleVote(fb.uuid, FeedbackVoteEnum.UPVOTE)}
-                >
-                  Upvote
-                </Button>
+                  <Typography className={styles.description}>
+                    {fb.description}
+                  </Typography>
+                </Box>
 
-                <Button
-                  onClick={() => handleVote(fb.uuid, FeedbackVoteEnum.DEVOTE)}
-                >
-                  Devote
-                </Button>
-              </Box>
+                <Box className={styles.section}>
+                  <Typography className={styles.sectionTitle}>
+                    Tags
+                  </Typography>
 
-              <Box className={styles.footer}>
-                <Typography className={styles.meta}>
-                  Created: {new Date(fb.created_at).toLocaleString()}
-                </Typography>
+                  <Box className={styles.tagsContainer}>
+                    {fb.tags.map((tag: any) => (
+                      <Box key={tag.uuid} className={styles.tag}>
+                        <Typography className={styles.tagText}>
+                          {tag.tag_name}
+                        </Typography>
+                      </Box>
+                    ))}
+                  </Box>
+                </Box>
 
-                <Typography className={styles.meta}>
-                  Votes: {fb.votes.length}
-                </Typography>
-              </Box>
-            </CardContent>
-          </Card>
-        ))}
+                <Box className={styles.actionButtons}>
+                  <Button onClick={() => router.push(`/global/feedback/${fb.uuid}`)}>
+                    View
+                  </Button>
+
+                  <Button
+                    onClick={() => handleVote(fb.uuid, FeedbackVoteEnum.UPVOTE)}
+                    sx={{
+                      fontWeight: myVote === FeedbackVoteEnum.UPVOTE ? "bold" : "normal",
+                      color: myVote === FeedbackVoteEnum.UPVOTE ? "green" : "gray"
+                    }}
+                  >
+                    Upvote
+                  </Button>
+
+                  <Button
+                    onClick={() => handleVote(fb.uuid, FeedbackVoteEnum.DEVOTE)}
+                    sx={{
+                      fontWeight: myVote === FeedbackVoteEnum.DEVOTE ? "bold" : "normal",
+                      color: myVote === FeedbackVoteEnum.DEVOTE ? "red" : "gray"
+                    }}
+                  >
+                    Devote
+                  </Button>
+                </Box>
+
+                <Box className={styles.footer}>
+                  <Typography className={styles.meta}>
+                    Created: {new Date(fb.created_at).toLocaleString()}
+                  </Typography>
+
+                  <Typography className={styles.meta}>
+                    Votes: {fb.votes.length}
+                  </Typography>
+
+                  <Typography className={styles.meta}>
+                    Score: {score}
+                  </Typography>
+                </Box>
+              </CardContent>
+            </Card>
+          )
+        })}
       </InfiniteScroll>
     </>
   )

@@ -14,6 +14,7 @@ import { FeedbackVoteEnum } from "@/enums/feedback";
 export default function GlobalFeedbackPage() {
     const { feedbacks: userFeedbacks } = useAppSelector((state: RootState) => state.UserfeedbackReducer);
     const { feedbacks: globalFeedbacks } = useAppSelector((state: RootState) => state.globalfeedbackReducer);
+    const { user } = useAppSelector((state: RootState) => state.authReducer)
     const dispatch = useAppDispatch()
     const { uuid } = useParams();
     const feedbackId = Array.isArray(uuid) ? uuid[0] : uuid;
@@ -34,6 +35,14 @@ export default function GlobalFeedbackPage() {
             </Box>
         );
     }
+
+    const myVote = specific_feedback.votes.find(v => v.user_uuid === user?.uid)?.vote_type;
+
+    const score = specific_feedback.votes.reduce((acc, v) => {
+        if (v.vote_type === FeedbackVoteEnum.UPVOTE) return acc + 1;
+        if (v.vote_type === FeedbackVoteEnum.DEVOTE) return acc - 1;
+        return acc;
+    }, 0);
 
     const handleVote = async (uuid: string, voteType: FeedbackVoteEnum) => {
         try {
@@ -95,13 +104,21 @@ export default function GlobalFeedbackPage() {
 
                     <Box className={styles.actionButtons}>
                         <Button
-                            onClick={() => handleVote(fb.uuid, FeedbackVoteEnum.UPVOTE)}
+                            onClick={() => handleVote(specific_feedback.uuid, FeedbackVoteEnum.UPVOTE)}
+                            sx={{
+                                fontWeight: myVote === FeedbackVoteEnum.UPVOTE ? "bold" : "normal",
+                                color: myVote === FeedbackVoteEnum.UPVOTE ? "green" : "gray"
+                            }}
                         >
                             Upvote
                         </Button>
 
                         <Button
-                            onClick={() => handleVote(fb.uuid, FeedbackVoteEnum.DEVOTE)}
+                            onClick={() => handleVote(specific_feedback.uuid, FeedbackVoteEnum.DEVOTE)}
+                            sx={{
+                                fontWeight: myVote === FeedbackVoteEnum.DEVOTE ? "bold" : "normal",
+                                color: myVote === FeedbackVoteEnum.DEVOTE ? "red" : "gray"
+                            }}
                         >
                             Devote
                         </Button>
@@ -112,6 +129,10 @@ export default function GlobalFeedbackPage() {
                     <Box className={styles.footer}>
                         <Typography className={styles.meta}>
                             Created: {new Date(specific_feedback.created_at).toLocaleString()}
+                        </Typography>
+
+                        <Typography className={styles.meta}>
+                            Votes: {specific_feedback.votes.length}
                         </Typography>
 
                         <Typography className={styles.meta}>

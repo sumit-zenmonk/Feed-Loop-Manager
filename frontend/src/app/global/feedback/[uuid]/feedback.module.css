@@ -68,7 +68,8 @@
 .footer {
     width: 100%;
     display: flex;
-    justify-content: space-between;
+    gap: 5%;
+    justify-content: flex-start;
 }
 
 .meta {
