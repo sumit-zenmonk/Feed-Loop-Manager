@@ -36,17 +36,4 @@ export class RegisteredUserService {
             message: "User Account Updated"
         }
     }
-
-    async disbaleEnableUserFeedback(admin: UserEntity, feedback_uuid: string) {
-        const isExistsAndActiveFeedback = await this.feedbackRepo.findByUuid(feedback_uuid);
-        if (!isExistsAndActiveFeedback) {
-            throw new BadRequestException("feedback not found");
-        }
-
-        await this.feedbackRepo.disbaleEnableUserFeedback(admin.uuid, feedback_uuid, !isExistsAndActiveFeedback[0]?.is_disabled_by_admin);
-
-        return {
-            message: "User Account Updated"
-        }
-    }
 }

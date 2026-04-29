@@ -80,7 +80,7 @@ export const enableDisableFeedback = createAsyncThunk<
             const token = getState().authReducer.token || ""
 
             const res = await fetch(
-                `${API_URL}/admin/user/feedback/status/${uuid}`,
+                `${API_URL}/admin/feedback/status/${uuid}`,
                 {
                     method: "PATCH",
                     headers: {
@@ -93,6 +93,39 @@ export const enableDisableFeedback = createAsyncThunk<
             if (!res.ok) throw new Error(data.message)
 
             return { message: data.message, uuid }
+        } catch (err: any) {
+            return rejectWithValue(err.message)
+        }
+    }
+)
+
+export const fetchInactiveFeedbacks = createAsyncThunk<
+    FetchInactiveFeedbackResponse,
+    { offset?: number; limit?: number },
+    { state: RootState }
+>(
+    "admin/inactive/feedbacks/fetch",
+    async ({ offset = 0, limit = 10 }, { getState, rejectWithValue }) => {
+        try {
+            const token = getState().authReducer.token || ""
+
+            const res = await fetch(
+                `${API_URL}/admin/feedback/inactive?offset=${offset}&limit=${limit}`,
+                {
+                    method: "GET",
+                    headers: {
+                        Authorization: `${token}`,
+                    },
+                }
+            )
+
+            const data = await res.json()
+            if (!res.ok) throw new Error(data.message)
+            console.log(data);
+            return {
+                feedbacks: data.data,
+                total: data.totalDocuments,
+            }
         } catch (err: any) {
             return rejectWithValue(err.message)
         }

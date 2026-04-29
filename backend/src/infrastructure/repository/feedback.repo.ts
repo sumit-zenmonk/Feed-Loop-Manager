@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { FeedbackEntity } from "src/domain/entities/feedback/feedback.entity";
+import { UserEntity } from "src/domain/entities/user/user.entity";
 import { FeedbackStatusEnum } from "src/domain/enums/feedback";
 import { DataSource, Not, Repository } from "typeorm";
 
@@ -23,7 +24,8 @@ export class FeedbackRepository extends Repository<FeedbackEntity> {
                 comments: true,
                 creator: true,
                 votes: true,
-                tags: true
+                tags: true,
+                disabled_by_admin: true
             }
         });
         return user;
@@ -39,7 +41,8 @@ export class FeedbackRepository extends Repository<FeedbackEntity> {
                 comments: true,
                 creator: true,
                 votes: true,
-                tags: true
+                tags: true,
+                disabled_by_admin: true
             }
         });
         return user;
@@ -58,7 +61,8 @@ export class FeedbackRepository extends Repository<FeedbackEntity> {
                 comments: true,
                 creator: true,
                 votes: true,
-                tags: true
+                tags: true,
+                disabled_by_admin: true
             },
             skip: offset ?? Number(process.env.page_offset) ?? 0,
             take: limit ?? Number(process.env.page_limit) ?? 10
@@ -75,7 +79,26 @@ export class FeedbackRepository extends Repository<FeedbackEntity> {
                 comments: true,
                 creator: true,
                 votes: true,
-                tags: true
+                tags: true,
+                disabled_by_admin: true
+            },
+            skip: offset ?? Number(process.env.page_offset) ?? 0,
+            take: limit ?? Number(process.env.page_limit) ?? 10
+        });
+    }
+
+    async getInactiveFeedbacks(admin: UserEntity, offset?: number, limit?: number) {
+        return await this.findAndCount({
+            where: {
+                disabled_by_admin_uuid: admin.uuid,
+                is_disabled_by_admin: true
+            },
+            relations: {
+                comments: true,
+                creator: true,
+                votes: true,
+                tags: true,
+                disabled_by_admin: true
             },
             skip: offset ?? Number(process.env.page_offset) ?? 0,
             take: limit ?? Number(process.env.page_limit) ?? 10

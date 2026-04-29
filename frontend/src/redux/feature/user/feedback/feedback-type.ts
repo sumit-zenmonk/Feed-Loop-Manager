@@ -17,6 +17,9 @@ export interface Feedback {
     votes: any[]
     comments: any[]
     tags: any[]
+    is_disabled_by_admin: boolean
+    disabled_by_admin_uuid: string
+    disabled_by_admin: FeedbackUser
     created_at: string
     updated_at: string
     deleted_at: string | null

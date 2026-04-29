@@ -20,9 +20,4 @@ export class RegisteredUserController {
     async disbaleEnableUserAccount(@Req() req: Request, @Param('user_uuid') user_uuid: string) {
         return this.registeredUserService.disbaleEnableUserAccount(req.user, user_uuid);
     }
-
-    @Patch('feedback/status/:feedback_uuid')
-    async disbaleEnableUserFeedback(@Req() req: Request, @Param('feedback_uuid') feedback_uuid: string) {
-        return this.registeredUserService.disbaleEnableUserFeedback(req.user, feedback_uuid);
-    }
 }

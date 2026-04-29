@@ -129,6 +129,10 @@ export default function UserFeedbBackPage() {
                                     <Typography className={styles.status}>
                                         {fb.status}
                                     </Typography>
+
+                                    <Typography className={styles.status}>
+                                        {fb.is_disabled_by_admin ? "disabled" : "enabled"}
+                                    </Typography>
                                 </Box>
 
                                 <Box className={styles.section}>
