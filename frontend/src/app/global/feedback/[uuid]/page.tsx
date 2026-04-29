@@ -208,7 +208,7 @@ export default function GlobalFeedbackPage() {
                         </Typography>
 
                         <Typography className={styles.meta}>
-                            Votes: {specific_feedback.votes.length}
+                            Score: {score}
                         </Typography>
                     </Box>
 
