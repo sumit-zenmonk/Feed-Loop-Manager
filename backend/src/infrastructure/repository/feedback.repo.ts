@@ -68,7 +68,8 @@ export class FeedbackRepository extends Repository<FeedbackEntity> {
     async getFeedbacks(offset?: number, limit?: number) {
         return await this.findAndCount({
             where: {
-                status: FeedbackStatusEnum.PUBLIC
+                status: FeedbackStatusEnum.PUBLIC,
+                is_disabled_by_admin: false
             },
             relations: {
                 comments: true,
@@ -84,5 +85,15 @@ export class FeedbackRepository extends Repository<FeedbackEntity> {
     async updateFeedbackByUuid(uuid: string, payload: Partial<FeedbackEntity>) {
         await this.update({ uuid }, payload);
         return await this.findByUuid(uuid);
+    }
+
+    async disbaleEnableUserFeedback(admin_uuid: string, uuid: string, toggle: boolean) {
+        return await this.update(
+            { uuid: uuid },
+            {
+                disabled_by_admin_uuid: admin_uuid,
+                is_disabled_by_admin: toggle
+            }
+        );
     }
 }

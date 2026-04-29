@@ -40,6 +40,16 @@ export class FeedbackEntity {
     @OneToMany(() => FeedbackCommentEntity, (comment) => comment.feedback)
     comments: FeedbackCommentEntity[];
 
+    @Column({ type: "boolean", default: false })
+    is_disabled_by_admin: boolean
+
+    @Column({ type: "uuid", nullable: true })
+    disabled_by_admin_uuid: string;
+
+    @ManyToOne(() => UserEntity, { nullable: true })
+    @JoinColumn({ name: 'disabled_by_admin_uuid' })
+    disabled_by_admin: UserEntity;
+
     @CreateDateColumn()
     created_at: Date;
 

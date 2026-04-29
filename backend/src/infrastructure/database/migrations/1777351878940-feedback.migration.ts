@@ -17,6 +17,8 @@ export class FeedbackMigration1777351878940 implements MigrationInterface {
                     { name: "description", type: "varchar", length: "200", isNullable: false },
                     { name: "creator_uuid", type: "uuid", isNullable: false },
                     { name: "status", type: "feedback_status_enum", default: `'public'`, isNullable: false },
+                    { name: "is_disabled_by_admin", type: "boolean", default: false },
+                    { name: "disabled_by_admin_uuid", type: "uuid", isNullable: true },
                     { name: "created_at", type: "timestamp", default: "now()" },
                     { name: "updated_at", type: "timestamp", default: "now()" },
                     { name: "deleted_at", type: "timestamp", isNullable: true },
@@ -35,10 +37,22 @@ export class FeedbackMigration1777351878940 implements MigrationInterface {
                 onDelete: "CASCADE"
             })
         );
+
+        await queryRunner.createForeignKey(
+            "user",
+            new TableForeignKey({
+                name: "FK_FEEDBACK_DISABLED_BY_ADMIN",
+                columnNames: ["disabled_by_admin_uuid"],
+                referencedTableName: "user",
+                referencedColumnNames: ["uuid"],
+                onDelete: "SET NULL"
+            })
+        );
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.dropForeignKey("feedback", "FK_FEEDBACK_CREATOR");
+        await queryRunner.dropForeignKey("user", "FK_FEEDBACK_DISABLED_BY_ADMIN");
         await queryRunner.dropTable("feedback", true);
         await queryRunner.query(`DROP TYPE IF EXISTS "public"."feedback_status_enum"`);
     }

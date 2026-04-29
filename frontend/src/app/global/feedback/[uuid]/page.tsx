@@ -10,6 +10,7 @@ import { fetchSpecificFeedback } from "@/redux/feature/global/feedback/feedback-
 import { enqueueSnackbar } from "notistack";
 import { useState } from "react";
 import { FeedbackVoteEnum } from "@/enums/feedback";
+import { enableDisableFeedback } from "@/redux/feature/admin/user/user-action"
 
 export default function GlobalFeedbackPage() {
     const { feedbacks: userFeedbacks } = useAppSelector((state: RootState) => state.UserfeedbackReducer);
@@ -56,6 +57,15 @@ export default function GlobalFeedbackPage() {
                 ...prev,
                 [uuid]: newVote
             }));
+        } catch (err: any) {
+            console.log(err)
+            enqueueSnackbar(err, { variant: "error" })
+        }
+    }
+
+    const handleEnableDisableFeedback = async (uuid: string) => {
+        try {
+            await dispatch(enableDisableFeedback({ uuid })).unwrap();
         } catch (err: any) {
             console.log(err)
             enqueueSnackbar(err, { variant: "error" })
@@ -121,6 +131,12 @@ export default function GlobalFeedbackPage() {
                             }}
                         >
                             Devote
+                        </Button>
+
+                        <Button
+                            onClick={() => handleEnableDisableFeedback(specific_feedback.uuid)}
+                        >
+                            Hide Feedback
                         </Button>
 
                         <Button onClick={handleOpen}>View Voters</Button>

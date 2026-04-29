@@ -50,7 +50,7 @@ const UserList = () => {
         }
     }
 
-    const handleEnableDisable = async (uuid: string) => {
+    const handleEnableDisableUser = async (uuid: string) => {
         try {
             await dispatch(enableDisableUser({ uuid })).unwrap();
         } catch (err: any) {
@@ -92,7 +92,7 @@ const UserList = () => {
 
                         <Box>
                             <Button
-                                onClick={() => handleEnableDisable(user.uuid)}
+                                onClick={() => handleEnableDisableUser(user.uuid)}
                             >
                                 {user.is_disabled_by_admin ? "Disabled" : "Active"}
                             </Button>

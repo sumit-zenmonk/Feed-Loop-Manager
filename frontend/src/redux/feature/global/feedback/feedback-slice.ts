@@ -3,6 +3,7 @@
 import { createSlice } from "@reduxjs/toolkit"
 import { FeedbackState } from "./feedback-type"
 import { fetchGlobalFeedbacks, fetchSpecificFeedback } from "./feedback-action"
+import { enableDisableFeedback } from "../../admin/user/user-action"
 
 const initialState: FeedbackState = {
     feedbacks: [],
@@ -67,6 +68,10 @@ const feedbackSlice = createSlice({
                 state.loading = false
                 state.status = "rejected"
                 state.error = action.payload as string
+            })
+            .addCase(enableDisableFeedback.fulfilled, (state, action) => {
+                state.feedbacks = state.feedbacks.filter((u) => u.uuid !== action.meta.arg.uuid)
+                state.total_feedbacks = state.total_feedbacks--
             })
     },
 })

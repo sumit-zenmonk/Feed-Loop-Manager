@@ -50,7 +50,37 @@ export const enableDisableUser = createAsyncThunk<
             const token = getState().authReducer.token || ""
 
             const res = await fetch(
-                `${API_URL}/admin/user/${uuid}`,
+                `${API_URL}/admin/user/account/status/${uuid}`,
+                {
+                    method: "PATCH",
+                    headers: {
+                        Authorization: `${token}`,
+                    },
+                }
+            )
+
+            const data = await res.json()
+            if (!res.ok) throw new Error(data.message)
+
+            return { message: data.message, uuid }
+        } catch (err: any) {
+            return rejectWithValue(err.message)
+        }
+    }
+)
+
+export const enableDisableFeedback = createAsyncThunk<
+    { message: string },
+    { uuid: string },
+    { state: RootState }
+>(
+    "admin/feedback/enable-disable",
+    async ({ uuid }, { getState, rejectWithValue }) => {
+        try {
+            const token = getState().authReducer.token || ""
+
+            const res = await fetch(
+                `${API_URL}/admin/user/feedback/status/${uuid}`,
                 {
                     method: "PATCH",
                     headers: {
