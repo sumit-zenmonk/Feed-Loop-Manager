@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap');
+
 .userInfo {
   display: flex;
   flex-direction: column;
@@ -102,6 +104,7 @@
 }
 
 .replyIcon {
+  background-image: url("assets/2a0bc34f2fdf6d6b.svg");
   width: 16px;
   height: 13px;
   filter: invert(67%) sepia(0%) saturate(0%) hue-rotate(110deg) brightness(85%) contrast(84%);
@@ -110,6 +113,7 @@
 }
 
 .optionIcon {
+  background-image: url("assets/a0e565557add9041.svg");
   width: 6px;
   height: 6px;
   filter: invert(24%) sepia(0%) saturate(0%) hue-rotate(155deg) brightness(98%) contrast(93%);
@@ -268,6 +272,7 @@
 }
 
 .emoji-input .emoji-icon {
+  background-image: url("assets/f86f932721d4cf30.svg");
   position: relative;
   width: 24px;
   background-repeat: no-repeat;
@@ -410,6 +415,7 @@
   border: 2px solid rgb(0, 183, 238);
 }
 
+/* add css module styles here (optional) */
 body blockquote {
   border-left: 5px solid #f1f1f1;
   padding-left: 5px;

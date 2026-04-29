@@ -97,6 +97,8 @@ export default function GlobalFeedbackPage() {
             await dispatch(fetchSpecificFeedback({ uuid: feedback_uuid }))
         } catch (err: any) {
             enqueueSnackbar(err, { variant: "error" })
+        } finally {
+            await dispatch(fetchSpecificFeedback({ uuid: feedback_uuid }))
         }
     }
 
