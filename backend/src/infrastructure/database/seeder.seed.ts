@@ -4,6 +4,7 @@ import { UserEntity } from 'src/domain/entities/user/user.entity';
 import { BcryptService } from '../services/bcrypt.service';
 import { UserRoleEnum } from 'src/domain/enums/user';
 import { FeedbackEntity } from 'src/domain/entities/feedback/feedback.entity';
+import { FeedbackTagEntity } from 'src/domain/entities/feedback/feedback.tag.entity';
 
 async function create() {
     dataSource.setOptions({
@@ -30,11 +31,18 @@ async function create() {
             });
             console.log(user);
 
-            await queryRunner.manager.save(FeedbackEntity, {
+            const feedback = await queryRunner.manager.save(FeedbackEntity, {
                 title: faker.book.title(),
-                description:faker.book.genre(),
-                creator_uuid:user.uuid
+                description: faker.book.genre(),
+                creator_uuid: user.uuid
             });
+
+            for (const _ of Array.from(Array(2).keys())) {
+                await queryRunner.manager.save(FeedbackTagEntity, {
+                    feedback_uuid: feedback.uuid,
+                    tag_name: faker.word.sample(5) 
+                });
+            }
         }
 
         await queryRunner.commitTransaction();
