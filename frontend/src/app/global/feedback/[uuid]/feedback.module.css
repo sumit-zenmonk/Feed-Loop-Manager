@@ -1,0 +1,94 @@
+.card {
+    display: flex;
+    flex-direction: column;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    gap: 5%;
+}
+
+.header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.title {
+    font-weight: 600;
+    width: 70%;
+}
+
+.status {
+    width: 20%;
+    text-align: right;
+    text-transform: capitalize;
+    color: #1976d2;
+}
+
+.section {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10%;
+}
+
+.sectionTitle {
+    font-weight: 600;
+    color: #555;
+}
+
+.description {
+    width: 100%;
+    line-height: 1.6;
+}
+
+.tagsContainer {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2%;
+}
+
+.tag {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1% 2%;
+    background-color: #e3f2fd;
+    border-radius: 20px;
+}
+
+.tagText {
+    font-size: 0.85rem;
+}
+
+.footer {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.meta {
+    font-size: 0.8rem;
+    color: #777;
+}
+
+.center {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 40%;
+    border: 2px solid #000;
+    box-shadow: 24;
+    padding: 4;
+}

@@ -1,0 +1,41 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 2%;
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 2%;
+    gap: 2%;
+}
+
+.row {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.name {
+    width: 60%;
+}
+
+.role {
+    width: 40%;
+    text-align: right;
+    text-transform: capitalize;
+}
+
+.email {
+    width: 100%;
+}
+
+.center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}

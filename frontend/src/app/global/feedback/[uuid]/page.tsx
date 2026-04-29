@@ -1,0 +1,127 @@
+"use client";
+
+import { Card, CardContent, Typography, Stack, Box, Button, Modal, } from "@mui/material";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks.ts";
+import { RootState } from "@/redux/store";
+import { useParams, useRouter } from "next/navigation";
+import styles from "./feedback.module.css";
+import { updateUserFeedbackVote } from "@/redux/feature/user/feedback/feedback-action";
+import { fetchSpecificFeedback } from "@/redux/feature/global/feedback/feedback-action";
+import { enqueueSnackbar } from "notistack";
+import { useState } from "react";
+
+export default function GlobalFeedbackPage() {
+    const { feedbacks: userFeedbacks } = useAppSelector((state: RootState) => state.UserfeedbackReducer);
+    const { feedbacks: globalFeedbacks } = useAppSelector((state: RootState) => state.globalfeedbackReducer);
+    const dispatch = useAppDispatch()
+    const { uuid } = useParams();
+    const feedbackId = Array.isArray(uuid) ? uuid[0] : uuid;
+    const router = useRouter();
+    const [open, setOpen] = useState(false);
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
+
+    const specific_feedback =
+        userFeedbacks.find((fb) => fb.uuid === feedbackId) ||
+        globalFeedbacks.find((fb) => fb.uuid === feedbackId);
+
+    if (!specific_feedback) {
+        return (
+            <Box className={styles.center}>
+                <Typography variant="h6">Feedback not found</Typography>
+            </Box>
+        );
+    }
+
+    const handleVoteDevote = async (uuid: string) => {
+        try {
+            await dispatch(updateUserFeedbackVote({ feedback_uuid: uuid })).unwrap()
+            await dispatch(fetchSpecificFeedback({ uuid })).unwrap()
+        } catch (err: any) {
+            console.log(err);
+            if (err == 'Unauthorized') {
+                router.push('/login');
+            }
+            enqueueSnackbar(err, { variant: "error" })
+        }
+    }
+
+    return (
+        <Box className={styles.container}>
+            <Card className={styles.card}>
+                <CardContent className={styles.content}>
+                    <Box className={styles.header}>
+                        <Typography variant="h5" className={styles.title}>
+                            {specific_feedback.title}
+                        </Typography>
+
+                        <Typography className={styles.status}>
+                            {specific_feedback.status}
+                        </Typography>
+                    </Box>
+
+                    <Box className={styles.section}>
+                        <Typography className={styles.sectionTitle}>
+                            Description
+                        </Typography>
+
+                        <Typography className={styles.description}>
+                            {specific_feedback.description}
+                        </Typography>
+                    </Box>
+
+                    <Box className={styles.section}>
+                        <Typography className={styles.sectionTitle}>
+                            Tags
+                        </Typography>
+
+                        <Box className={styles.tagsContainer}>
+                            {specific_feedback.tags.map((tag: any) => (
+                                <Box key={tag.uuid} className={styles.tag}>
+                                    <Typography className={styles.tagText}>
+                                        {tag.tag_name}
+                                    </Typography>
+                                </Box>
+                            ))}
+                        </Box>
+                    </Box>
+
+                    <Box className={styles.actionButtons}>
+                        <Button
+                            onClick={() => handleVoteDevote(specific_feedback.uuid)}
+                        >
+                            vote/devote
+                        </Button>
+
+                        <Button onClick={handleOpen}>View Voters</Button>
+                    </Box>
+
+                    <Box className={styles.footer}>
+                        <Typography className={styles.meta}>
+                            Created: {new Date(specific_feedback.created_at).toLocaleString()}
+                        </Typography>
+
+                        <Typography className={styles.meta}>
+                            Votes: {specific_feedback.votes.length}
+                        </Typography>
+                    </Box>
+
+                    <Modal open={open} onClose={handleClose} className={styles.modal}>
+                        <Box>
+                            {specific_feedback.votes?.map((vote: any) => (
+                                <Box key={vote.uuid}>
+                                    <Box className={styles.row}>
+                                        <Typography>
+                                            {vote.user.name}
+                                        </Typography>
+                                    </Box>
+                                </Box>
+                            ))}
+                        </Box>
+                    </Modal>
+
+                </CardContent>
+            </Card>
+        </Box>
+    );
+}

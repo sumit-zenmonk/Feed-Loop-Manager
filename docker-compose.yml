@@ -1,0 +1,55 @@
+name: Feedloop
+
+services:
+  pgadmin:
+    image: dpage/pgadmin4:9.8
+    ports:
+      - 5050:80
+    env_file: ./.env
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+    volumes:
+    - pgadmin_data:/var/lib/pgadmin
+
+  database:
+    image: postgres:16
+    container_name: postgres_db
+    restart: always
+    env_file: ./backend/.env
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: dockerfile
+    ports:
+      - "9001:9001"
+    depends_on:
+      - database
+    command: sh -c "npm run build && npm run start:dev"
+    env_file: ./backend/.env
+    volumes:
+      - ./backend:/app
+      - /app/node_modules 
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: dockerfile
+    ports:
+      - "3000:3000"
+    command: sh -c "npm run build && npm run dev"
+    depends_on:
+      - backend
+    env_file: ./frontend/.env
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules 
+
+volumes:
+  postgres_data: {}
+  pgadmin_data: {}
