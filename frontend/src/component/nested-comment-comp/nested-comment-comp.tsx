@@ -39,11 +39,14 @@ export default function NestedComments({
             return all
                 .filter((c) => c.comment_parent_uuid === parentId)
                 .map((c) => ({
-                    userId: c.user.uuid,
+                    userId: String(c.user.uuid),
                     comId: c.uuid,
                     fullName: c.user.name,
+                    parentId: c.comment_parent_uuid || null,
                     text: c.comment,
                     avatarUrl: 'https://fastly.picsum.photos/id/237/536/354.jpg?hmac=i0yVXW1ORpyCZpQ-CknuyV-jbtU7_x9EBQVhvT5aRr0',
+                    userProfile: "",
+                    timestamp: new Date(c.created_at).toISOString(),
                     replies: build(c.uuid), // Recursion
                 }));
         };
@@ -58,7 +61,7 @@ export default function NestedComments({
         <Box sx={{ "& .comment-section": { fontFamily: "inherit" } }}>
             <CommentSection
                 currentUser={{
-                    currentUserId: currentUser.uuid,
+                    currentUserId: String(currentUser.uuid),// it should be used in String strict lib dependency
                     currentUserFullName: currentUser.name,
                     currentUserImg: 'https://fastly.picsum.photos/id/237/536/354.jpg?hmac=i0yVXW1ORpyCZpQ-CknuyV-jbtU7_x9EBQVhvT5aRr0',
                     currentUserProfile: ''
@@ -66,7 +69,7 @@ export default function NestedComments({
                 placeHolder='Write your comment...'
                 customNoComment={() => customNoComment()}
                 commentData={mapComments(comments)}
-                onSubmitAction={(data: any) => onAdd(data.text, data.parentOfDeleteId)}
+                onSubmitAction={(data: any) => onAdd(data.text, data.parentId || data.replyTo)}
                 onDeleteAction={(data: any) => onDelete?.(data.comIdToDelete)}
                 onEditAction={(data: any) => onEdit?.(data.comId, data.text)}
                 logIn={{ loginLink: "#", signUpLink: "#" }}
