@@ -32,7 +32,7 @@ async function create() {
             console.log(user);
 
             const feedback = await queryRunner.manager.save(FeedbackEntity, {
-                title: faker.book.title(),
+                title: faker.word.sample(10),
                 description: faker.book.genre(),
                 creator_uuid: user.uuid
             });

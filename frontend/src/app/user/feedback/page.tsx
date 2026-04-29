@@ -13,6 +13,7 @@ import { useRouter } from "next/navigation"
 import styles from "./feedback.module.css";
 import { fetchSpecificFeedback } from "@/redux/feature/global/feedback/feedback-action"
 import InfiniteScroll from "react-infinite-scroll-component"
+import {FeedbackVoteEnum} from "@/enums/feedback";
 
 export default function UserFeedbBackPage() {
     const dispatch = useAppDispatch()
@@ -20,6 +21,7 @@ export default function UserFeedbBackPage() {
     const router = useRouter();
     const [open, setOpen] = useState(false)
     const [offset, setOffset] = useState(0);
+    const [userVotes, setUserVotes] = useState<Record<string, FeedbackVoteEnum | undefined>>({});
     const limit = 10
 
     useEffect(() => {
@@ -59,10 +61,18 @@ export default function UserFeedbBackPage() {
         }
     }
 
-    const handleVoteDevote = async (uuid: string) => {
+    const handleVote = async (uuid: string, voteType: FeedbackVoteEnum) => {
         try {
-            await dispatch(updateUserFeedbackVote({ feedback_uuid: uuid })).unwrap()
+            const currentVote = userVotes[uuid];
+            const newVote = currentVote === voteType ? undefined : voteType;
+
+            await dispatch(updateUserFeedbackVote({ feedback_uuid: uuid ,vote_type:newVote})).unwrap()
             await dispatch(fetchSpecificFeedback({ uuid })).unwrap()
+
+            setUserVotes(prev => ({
+                ...prev,
+                [uuid]: newVote
+            }));
         } catch (err: any) {
             console.log(err)
             enqueueSnackbar(err, { variant: "error" })
@@ -143,9 +153,15 @@ export default function UserFeedbBackPage() {
                                 </Button>
 
                                 <Button
-                                    onClick={() => handleVoteDevote(fb.uuid)}
+                                    onClick={() => handleVote(fb.uuid, FeedbackVoteEnum.UPVOTE)}
                                 >
-                                    vote/devote
+                                    Upvote
+                                </Button>
+
+                                <Button
+                                    onClick={() => handleVote(fb.uuid, FeedbackVoteEnum.DEVOTE)}
+                                >
+                                    Devote
                                 </Button>
 
                                 <Button

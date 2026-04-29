@@ -9,6 +9,7 @@ import { updateUserFeedbackVote } from "@/redux/feature/user/feedback/feedback-a
 import { fetchSpecificFeedback } from "@/redux/feature/global/feedback/feedback-action";
 import { enqueueSnackbar } from "notistack";
 import { useState } from "react";
+import { FeedbackVoteEnum } from "@/enums/feedback";
 
 export default function GlobalFeedbackPage() {
     const { feedbacks: userFeedbacks } = useAppSelector((state: RootState) => state.UserfeedbackReducer);
@@ -20,6 +21,7 @@ export default function GlobalFeedbackPage() {
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
+    const [userVotes, setUserVotes] = useState<Record<string, FeedbackVoteEnum | undefined>>({});
 
     const specific_feedback =
         userFeedbacks.find((fb) => fb.uuid === feedbackId) ||
@@ -33,15 +35,20 @@ export default function GlobalFeedbackPage() {
         );
     }
 
-    const handleVoteDevote = async (uuid: string) => {
+    const handleVote = async (uuid: string, voteType: FeedbackVoteEnum) => {
         try {
-            await dispatch(updateUserFeedbackVote({ feedback_uuid: uuid })).unwrap()
+            const currentVote = userVotes[uuid];
+            const newVote = currentVote === voteType ? undefined : voteType;
+
+            await dispatch(updateUserFeedbackVote({ feedback_uuid: uuid, vote_type: newVote })).unwrap()
             await dispatch(fetchSpecificFeedback({ uuid })).unwrap()
+
+            setUserVotes(prev => ({
+                ...prev,
+                [uuid]: newVote
+            }));
         } catch (err: any) {
-            console.log(err);
-            if (err == 'Unauthorized') {
-                router.push('/login');
-            }
+            console.log(err)
             enqueueSnackbar(err, { variant: "error" })
         }
     }
@@ -88,9 +95,15 @@ export default function GlobalFeedbackPage() {
 
                     <Box className={styles.actionButtons}>
                         <Button
-                            onClick={() => handleVoteDevote(specific_feedback.uuid)}
+                            onClick={() => handleVote(fb.uuid, FeedbackVoteEnum.UPVOTE)}
                         >
-                            vote/devote
+                            Upvote
+                        </Button>
+
+                        <Button
+                            onClick={() => handleVote(fb.uuid, FeedbackVoteEnum.DEVOTE)}
+                        >
+                            Devote
                         </Button>
 
                         <Button onClick={handleOpen}>View Voters</Button>

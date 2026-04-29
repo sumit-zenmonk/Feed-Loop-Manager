@@ -4,6 +4,10 @@ export class FeedbackVoteMigration1777351878942 implements MigrationInterface {
     name = "FeedbackVoteMigration1777351878942";
 
     public async up(queryRunner: QueryRunner): Promise<void> {
+        await queryRunner.query(
+            `CREATE TYPE "public"."vote_type_enum" AS ENUM('upvote', 'devote')`
+        );
+
         await queryRunner.createTable(
             new Table({
                 name: "feedback_vote",
@@ -11,6 +15,7 @@ export class FeedbackVoteMigration1777351878942 implements MigrationInterface {
                     { name: "uuid", type: "uuid", isPrimary: true, isGenerated: false, default: "uuid_generate_v4()" },
                     { name: "feedback_uuid", type: "uuid", isNullable: false },
                     { name: "user_uuid", type: "uuid", isNullable: false },
+                    { name: "vote_type", type: "vote_type_enum", isNullable: true },
                     { name: "created_at", type: "timestamp", default: "now()" },
                     { name: "updated_at", type: "timestamp", default: "now()" },
                     { name: "deleted_at", type: "timestamp", isNullable: true },
@@ -46,5 +51,6 @@ export class FeedbackVoteMigration1777351878942 implements MigrationInterface {
         await queryRunner.dropForeignKey("feedback_vote", "FK_FEEDBACK_VOTE_USER");
         await queryRunner.dropForeignKey("feedback_vote", "FK_FEEDBACK_VOTE_FEEDBACK");
         await queryRunner.dropTable("feedback_vote", true);
+        await queryRunner.query(`DROP TYPE IF EXISTS "public"."vote_type_enum"`);
     }
 }

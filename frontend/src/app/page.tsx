@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation"
 import { updateUserFeedbackVote } from "@/redux/feature/user/feedback/feedback-action"
 import { UserRoleEnum } from "@/enums/user"
 import InfiniteScroll from "react-infinite-scroll-component"
+import { FeedbackVoteEnum } from "@/enums/feedback";
 
 export default function Page() {
   const dispatch = useAppDispatch()
@@ -21,6 +22,7 @@ export default function Page() {
   const [offset, setOffset] = useState(0);
   const limit = 10
   const [tagFilter, setTagFilter] = useState("")
+  const [userVotes, setUserVotes] = useState<Record<string, FeedbackVoteEnum | undefined>>({});
 
   useEffect(() => {
     refresh()
@@ -35,16 +37,21 @@ export default function Page() {
     }
   }
 
-  const handleVoteDevote = async (uuid: string) => {
+  const handleVote = async (uuid: string, voteType: FeedbackVoteEnum) => {
     try {
-      await dispatch(updateUserFeedbackVote({ feedback_uuid: uuid })).unwrap()
+      const currentVote = userVotes[uuid];
+      const newVote = currentVote === voteType ? undefined : voteType;
+
+      await dispatch(updateUserFeedbackVote({ feedback_uuid: uuid, vote_type: newVote })).unwrap()
       await dispatch(fetchSpecificFeedback({ uuid })).unwrap()
+
+      setUserVotes(prev => ({
+        ...prev,
+        [uuid]: newVote
+      }));
     } catch (err: any) {
       console.log(err)
       enqueueSnackbar(err, { variant: "error" })
-      if (err == 'Unauthorized') {
-        router.push('/login');
-      }
     }
   }
 
@@ -61,15 +68,15 @@ export default function Page() {
       console.log(`Feedback List Fetching Error`, err);
     }
   }
-
   const filteredFeedbacks = tagFilter
-    ? feedbacks.filter((fb: Feedback) =>
-      fb.tags.some((tag: any) =>
-        tag.tag_name.toLowerCase().includes(tagFilter.toLowerCase())
-      )
-    )
-    : feedbacks
+  ? feedbacks.filter((fb: Feedback) =>
+    fb.tags.some((tag: any) =>
+      tag.tag_name.toLowerCase().includes(tagFilter.toLowerCase())
+)
+)
+: feedbacks
 
+console.log(filteredFeedbacks);
   return (
     <>
       <Box sx={{ p: 2 }}>
@@ -135,9 +142,15 @@ export default function Page() {
                 </Button>
 
                 <Button
-                  onClick={() => handleVoteDevote(fb.uuid)}
+                  onClick={() => handleVote(fb.uuid, FeedbackVoteEnum.UPVOTE)}
                 >
-                  vote/devote
+                  Upvote
+                </Button>
+
+                <Button
+                  onClick={() => handleVote(fb.uuid, FeedbackVoteEnum.DEVOTE)}
+                >
+                  Devote
                 </Button>
               </Box>
 

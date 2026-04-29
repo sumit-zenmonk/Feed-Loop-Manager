@@ -3,7 +3,7 @@ export enum FeedbackStatusEnum {
     PRIVATE = 'private'
 }
 
-export enum FeedbackVoteType {
+export enum FeedbackVoteEnum {
     UPVOTE = 'upvote',
     DEVOTE = 'devote'
 }

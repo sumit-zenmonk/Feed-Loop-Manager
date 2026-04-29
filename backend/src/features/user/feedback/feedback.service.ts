@@ -86,16 +86,24 @@ export class UserFeedbackService {
 
     async createFeedbackVote(user: UserEntity, body: FeedbackVoteChangeDto) {
         const isVoteExists = await this.feedbackVoteRepo.findByFeedbackUuid(body.feedback_uuid, user.uuid);
-        if (isVoteExists) {
-            await this.feedbackVoteRepo.deleteFeedbackVote(isVoteExists.uuid);
+        if (isVoteExists && body?.vote_type) {
+            await this.feedbackVoteRepo.updateFeedbackVoteByUuid(isVoteExists.uuid, body);
             return {
                 message: "Feedback vote updated"
             };
         }
 
-        await this.feedbackVoteRepo.createFeedbackVote({ feedback_uuid: body.feedback_uuid, user_uuid: user.uuid });
+        if (isVoteExists && !body?.vote_type) {
+            await this.feedbackVoteRepo.deleteFeedbackVote(isVoteExists.uuid);
+            return {
+                message: "Feedback vote deleted"
+            };
+        }
+
+        //create if not exits 
+        await this.feedbackVoteRepo.createFeedbackVote({ feedback_uuid: body.feedback_uuid, user_uuid: user.uuid, vote_type: body?.vote_type });
         return {
-            message: "Feedback vote updated"
+            message: "Feedback vote created"
         };
     }
 }

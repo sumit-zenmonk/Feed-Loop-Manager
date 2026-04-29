@@ -1,6 +1,7 @@
 import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { FeedbackEntity } from "./feedback.entity";
 import { UserEntity } from "../user/user.entity";
+import { FeedbackVoteEnum } from "src/domain/enums/feedback";
 
 @Entity('feedback_vote')
 export class FeedbackVoteEntity {
@@ -12,6 +13,13 @@ export class FeedbackVoteEntity {
 
     @Column({ type: "uuid", nullable: false })
     user_uuid: string
+
+    @Column({
+        type: "enum",
+        enum: FeedbackVoteEnum,
+        nullable: true
+    })
+    vote_type: FeedbackVoteEnum
 
     @ManyToOne(() => FeedbackEntity, (feedback) => feedback.votes)
     @JoinColumn({ name: "feedback_uuid" })

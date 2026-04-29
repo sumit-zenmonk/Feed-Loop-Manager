@@ -3,6 +3,7 @@
 import { RootState } from "@/redux/store"
 import { createAsyncThunk } from "@reduxjs/toolkit"
 import { Feedback, FetchFeedbackResponse } from "./feedback-type"
+import {FeedbackVoteEnum} from "@/enums/feedback";
 
 const API_URL = process.env.NEXT_PUBLIC_BACKEND_API_URL
 
@@ -123,7 +124,7 @@ export const updateUserFeedback = createAsyncThunk<
 
 export const updateUserFeedbackVote = createAsyncThunk<
     Feedback,
-    { feedback_uuid: string; },
+    { feedback_uuid: string; vote_type?: FeedbackVoteEnum },
     { state: RootState }
 >(
     "user/feedback/update/vote",

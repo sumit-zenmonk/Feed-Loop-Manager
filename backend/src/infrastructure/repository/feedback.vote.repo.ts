@@ -14,16 +14,30 @@ export class FeedbackVoteRepository extends Repository<FeedbackVoteEntity> {
     }
 
     async findByFeedbackUuid(feedback_uuid: string, user_uuid: string) {
-        const user = await this.findOne({
+        const feedbackVote = await this.findOne({
             where: {
                 feedback_uuid: feedback_uuid,
                 user_uuid: user_uuid
             },
         });
-        return user;
+        return feedbackVote;
+    }
+
+    async findByFeedbackVoteUuid(uuid: string) {
+        const feedbackVote = await this.findOne({
+            where: {
+                uuid
+            },
+        });
+        return feedbackVote;
     }
 
     async deleteFeedbackVote(uuid: string) {
         return await this.softDelete(uuid);
+    }
+
+    async updateFeedbackVoteByUuid(uuid: string, payload: Partial<FeedbackVoteEntity>) {
+        await this.update({ uuid }, payload);
+        return await this.findByFeedbackVoteUuid(uuid);
     }
 }
