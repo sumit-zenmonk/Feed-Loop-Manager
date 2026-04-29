@@ -5,7 +5,7 @@ import { useAppDispatch, useAppSelector } from "@/redux/hooks.ts";
 import { RootState } from "@/redux/store";
 import { useParams, useRouter } from "next/navigation";
 import styles from "./feedback.module.css";
-import { updateUserFeedbackVote, createUserFeedbackComment, deleteUserFeedbackComment } from "@/redux/feature/user/feedback/feedback-action";
+import { updateUserFeedbackVote, createUserFeedbackComment, deleteUserFeedbackComment, UpdateUserFeedbackComment } from "@/redux/feature/user/feedback/feedback-action";
 import { fetchSpecificFeedback } from "@/redux/feature/global/feedback/feedback-action";
 import { enqueueSnackbar } from "notistack";
 import { useState } from "react";
@@ -110,6 +110,19 @@ export default function GlobalFeedbackPage() {
             }
 
             await dispatch(deleteUserFeedbackComment({ uuid })).unwrap()
+        } catch (err: any) {
+            enqueueSnackbar(err, { variant: "error" })
+        }
+    }
+
+    const handleEditComment = async (uuid: string, text: string) => {
+        try {
+            if (!user) {
+                enqueueSnackbar("login first", { variant: "error" });
+                return;
+            }
+
+            await dispatch(UpdateUserFeedbackComment({ uuid, comment: text })).unwrap()
         } catch (err: any) {
             enqueueSnackbar(err, { variant: "error" })
         }
@@ -238,6 +251,7 @@ export default function GlobalFeedbackPage() {
                                 }}
                                 onAdd={(text, parentUuid) => handleAddComment(specific_feedback.uuid, text, parentUuid)}
                                 onDelete={handleDeleteComment}
+                                onEdit={handleEditComment}
                             />
                         </Box>
                     </Collapse>

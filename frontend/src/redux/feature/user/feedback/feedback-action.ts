@@ -211,3 +211,32 @@ export const deleteUserFeedbackComment = createAsyncThunk<
         }
     }
 )
+
+export const UpdateUserFeedbackComment = createAsyncThunk<
+    { message: string; uuid: string },
+    { uuid: string; comment: string },
+    { state: RootState }
+>(
+    "user/feedback/comment/update",
+    async (payload, { getState, rejectWithValue }) => {
+        try {
+            const token = getState().authReducer.token || ""
+
+            const res = await fetch(`${API_URL}/user/feedback/comment/edit`, {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: token,
+                },
+                body: JSON.stringify(payload),
+            })
+
+            const data = await res.json()
+            if (!res.ok) throw new Error(data.message)
+
+            return { message: data.message, uuid: payload.uuid }
+        } catch (err: any) {
+            return rejectWithValue(err.message)
+        }
+    }
+)

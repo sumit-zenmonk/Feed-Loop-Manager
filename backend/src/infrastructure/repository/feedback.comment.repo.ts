@@ -37,8 +37,8 @@ export class FeedbackCommentRepository extends Repository<FeedbackCommentEntity>
         return await this.softDelete(uuid);
     }
 
-    async updateComment(uuid: string, comment: string) {
-        await this.update(uuid, { comment });
+    async updateComment(uuid: string, body: Partial<FeedbackCommentEntity>) {
+        await this.update(uuid, body);
         return await this.getcomment(uuid);
     }
 }

@@ -2,7 +2,7 @@
 
 import { createSlice } from "@reduxjs/toolkit"
 import { FeedbackState } from "./feedback-type"
-import { createUserFeedback, createUserFeedbackComment, deleteUserFeedback, deleteUserFeedbackComment, fetchUserFeedbacks, updateUserFeedback, } from "./feedback-action"
+import { createUserFeedback, createUserFeedbackComment, deleteUserFeedback, deleteUserFeedbackComment, fetchUserFeedbacks, updateUserFeedback, UpdateUserFeedbackComment, } from "./feedback-action"
 import { fetchSpecificFeedback } from "../../global/feedback/feedback-action"
 
 const initialState: FeedbackState = {
@@ -155,6 +155,19 @@ const feedbackSlice = createSlice({
             .addCase(deleteUserFeedbackComment.rejected, (state, action) => {
                 state.loading = false
                 state.error = action.payload as string
+            })
+            .addCase(UpdateUserFeedbackComment.fulfilled, (state, action) => {
+                const { uuid } = action.payload
+
+                state.feedbacks.forEach((feedback) => {
+                    const commentIndex = feedback.comments.findIndex(
+                        (c: any) => c.uuid === uuid
+                    )
+
+                    if (commentIndex !== -1) {
+                        feedback.comments[commentIndex].comment = action.meta.arg.comment
+                    }
+                })
             })
     },
 })

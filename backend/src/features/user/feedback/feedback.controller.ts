@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Query, Req, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Post, Put, Query, Req, UseGuards } from "@nestjs/common";
 import { UserFeedbackService } from "./feedback.service";
 import { CreateFeedbackDto } from "./dto/feedback.create.dto";
 import type { Request } from "express";
@@ -32,7 +32,7 @@ export class UserFeedbackController {
     @Patch('/:uuid')
     async updateFeedback(
         @Req() req: Request,
-        @Param("uuid") uuid: string,
+        @Param('uuid', new ParseUUIDPipe()) uuid: string,
         @Body() body: UpdateFeedbackDto
     ) {
         return this.userFeedbackService.updateFeedback(req.user, uuid, body);
