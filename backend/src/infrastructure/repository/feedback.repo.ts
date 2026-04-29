@@ -87,7 +87,7 @@ export class FeedbackRepository extends Repository<FeedbackEntity> {
         });
     }
 
-    async getInactiveFeedbacks(admin: UserEntity, offset?: number, limit?: number) {
+    async gethiddenFeedbacks(admin: UserEntity, offset?: number, limit?: number) {
         return await this.findAndCount({
             where: {
                 disabled_by_admin_uuid: admin.uuid,

@@ -13,6 +13,7 @@ import { updateUserFeedbackVote } from "@/redux/feature/user/feedback/feedback-a
 import { UserRoleEnum } from "@/enums/user"
 import InfiniteScroll from "react-infinite-scroll-component"
 import { FeedbackVoteEnum } from "@/enums/feedback";
+import InactiveFeedbackModal from "@/component/inactive-feedback-modal-comp/inactive-feedback-modal-comp";
 
 export default function Page() {
   const dispatch = useAppDispatch()
@@ -23,6 +24,7 @@ export default function Page() {
   const limit = 10
   const [tagFilter, setTagFilter] = useState("")
   const [userVotes, setUserVotes] = useState<Record<string, FeedbackVoteEnum | undefined>>({});
+  const [openModal, setOpenModal] = useState(false);
 
   useEffect(() => {
     refresh()
@@ -78,13 +80,21 @@ export default function Page() {
 
   return (
     <>
-      <Box sx={{ p: 2 }}>
+      <Box sx={{ p: 2, display: "flex", gap: 2 }}>
         <TextField
           size="small"
           placeholder="Filter by tag"
           value={tagFilter}
           onChange={(e) => setTagFilter(e.target.value)}
         />
+
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={() => setOpenModal(true)}
+        >
+          View Hidden Feedbacks
+        </Button>
       </Box>
 
       <InfiniteScroll
@@ -188,6 +198,12 @@ export default function Page() {
           )
         })}
       </InfiniteScroll>
+
+      <InactiveFeedbackModal
+        open={openModal}
+        onClose={() => setOpenModal(false)}
+        onSuccess={refresh}
+      />
     </>
   )
 }

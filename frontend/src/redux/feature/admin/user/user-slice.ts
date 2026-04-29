@@ -2,7 +2,7 @@
 
 import { createSlice } from "@reduxjs/toolkit"
 import { UserState } from "./user-type"
-import { enableDisableUser, fetchUsers } from "./user-action"
+import { enableDisableUser, fetchUsers, fetchhiddenFeedbacks } from "./user-action"
 
 const initialState: UserState = {
     users: [],
@@ -53,6 +53,18 @@ const userSlice = createSlice({
                 if (user) {
                     user.is_disabled_by_admin = !user.is_disabled_by_admin
                 }
+            })
+            .addCase(fetchhiddenFeedbacks.fulfilled, (state, action) => {
+                const newFeedbacks = action.payload.feedbacks
+                if (action.meta.arg.offset === 0) {
+                    state.hidden_feedbacks = newFeedbacks
+                } else {
+                    const merged = [...state.hidden_feedbacks, ...newFeedbacks]
+                    state.hidden_feedbacks = Array.from(
+                        new Map(merged.map(fb => [fb.uuid, fb])).values()
+                    )
+                }
+                state.total_hidden_feedbacks = action.payload.total
             })
     },
 })

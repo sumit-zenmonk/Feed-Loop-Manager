@@ -99,18 +99,18 @@ export const enableDisableFeedback = createAsyncThunk<
     }
 )
 
-export const fetchInactiveFeedbacks = createAsyncThunk<
-    FetchInactiveFeedbackResponse,
+export const fetchhiddenFeedbacks = createAsyncThunk<
+    FetchhiddenFeedbackResponse,
     { offset?: number; limit?: number },
     { state: RootState }
 >(
-    "admin/inactive/feedbacks/fetch",
+    "admin/hidden/feedbacks/fetch",
     async ({ offset = 0, limit = 10 }, { getState, rejectWithValue }) => {
         try {
             const token = getState().authReducer.token || ""
 
             const res = await fetch(
-                `${API_URL}/admin/feedback/inactive?offset=${offset}&limit=${limit}`,
+                `${API_URL}/admin/feedback/hidden?offset=${offset}&limit=${limit}`,
                 {
                     method: "GET",
                     headers: {

@@ -16,8 +16,8 @@ export class AdminFeedbackController {
         return this.adminFeedbackService.disbaleEnableUserFeedback(req.user, feedback_uuid);
     }
 
-    @Get('/inactive')
-    async getInactiveFeedbacks(@Req() req: Request, @Query('offset') offset?: number, @Query('limit') limit?: number) {
-        return this.adminFeedbackService.getInactiveFeedbacks(req.user, offset, limit);
+    @Get('/hidden')
+    async gethiddenFeedbacks(@Req() req: Request, @Query('offset') offset?: number, @Query('limit') limit?: number) {
+        return this.adminFeedbackService.gethiddenFeedbacks(req.user, offset, limit);
     }
 }

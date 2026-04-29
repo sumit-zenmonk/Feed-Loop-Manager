@@ -34,14 +34,14 @@ export interface Feedback {
     deleted_at: string | null
 }
 
-export interface FetchInactiveFeedbackResponse {
+export interface FetchhiddenFeedbackResponse {
     feedbacks: Feedback[]
     total: number
 }
 
 export interface UserState {
-    inactive_feedbacks: InactiveFeedback[]
-    total_inactive_feedbacks: number
+    hidden_feedbacks: hiddenFeedback[]
+    total_hidden_feedbacks: number
     users: User[]
     total_users: number
     loading: boolean

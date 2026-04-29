@@ -14,24 +14,24 @@ export class AdminFeedbackService {
             throw new BadRequestException("feedback not found");
         }
 
-        await this.feedbackRepo.disbaleEnableUserFeedback(admin.uuid, feedback_uuid, !isExistsAndActiveFeedback[0]?.is_disabled_by_admin);
+        await this.feedbackRepo.disbaleEnableUserFeedback(admin.uuid, feedback_uuid, !isExistsAndActiveFeedback?.is_disabled_by_admin);
 
         return {
-            message: "User Account Updated"
+            message: "User Feedback Updated"
         }
     }
 
-    async getInactiveFeedbacks(admin: UserEntity, offset?: number, limit?: number) {
+    async gethiddenFeedbacks(admin: UserEntity, offset?: number, limit?: number) {
         const curr_limit = limit ?? Number(process.env.page_limit) ?? 10;
         const curr_offset = offset ?? Number(process.env.page_offset) ?? 0;
-        const [data, total] = await this.feedbackRepo.getInactiveFeedbacks(admin, curr_offset, curr_limit);
+        const [data, total] = await this.feedbackRepo.gethiddenFeedbacks(admin, curr_offset, curr_limit);
 
         return {
             data: data,
             limit: curr_limit,
             offset: curr_offset,
             totalDocuments: total,
-            message: "Inactive Feedback Listing Success"
+            message: "hidden Feedback Listing Success"
         }
     }
 }
