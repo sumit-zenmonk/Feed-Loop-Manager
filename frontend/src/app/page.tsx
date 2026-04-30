@@ -109,9 +109,10 @@ export default function Page() {
           placeholder="Search title/description"
           value={textFilter}
           onChange={(e) => setTextFilter(e.target.value)}
+          className={styles.filterBoxField}
         />
 
-        <FormControl size="small" sx={{ minWidth: 150 }}>
+        <FormControl size="small" sx={{ minWidth: 150 }} className={styles.filterBoxField}>
           <InputLabel>Tags</InputLabel>
           <Select
             multiple
@@ -124,7 +125,7 @@ export default function Page() {
           </Select>
         </FormControl>
 
-        <FormControl size="small" sx={{ minWidth: 120 }}>
+        <FormControl size="small" sx={{ minWidth: 150 }} className={styles.filterBoxField}>
           <InputLabel>Sort</InputLabel>
           <Select
             value={sortOrder}
@@ -135,12 +136,14 @@ export default function Page() {
           </Select>
         </FormControl>
 
-        {user?.role == UserRoleEnum.ADMIN && <Button
-          variant="outlined"
-          onClick={() => setOpenModal(true)}
-        >
-          View Hidden Feedbacks
-        </Button>}
+        {user?.role == UserRoleEnum.ADMIN &&
+          <Button
+            variant="outlined"
+            onClick={() => setOpenModal(true)}
+            className={styles.filterBoxField}
+          >
+            View Hidden Feedbacks
+          </Button>}
       </Box>
 
       <InfiniteScroll

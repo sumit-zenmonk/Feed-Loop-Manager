@@ -14,7 +14,7 @@
 .filterBox {
   width: 100%;
   padding: 1%;
-  /* border: 1px solid black; */
+  border: 1px solid rgb(132, 132, 132);
   border-radius: 16px;
   margin-bottom: 10px;
   display: flex;
@@ -22,6 +22,12 @@
   justify-content: space-around;
   background-color: white;
   box-shadow: 0 10 5 rgb(211, 211, 211);
+}
+
+.filterBoxField {
+  margin-right: 2%;
+  flex-grow: 1;
+  border-radius: 160px !important;
 }
 
 .content {
