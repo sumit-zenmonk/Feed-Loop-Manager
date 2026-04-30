@@ -1,6 +1,13 @@
+.container {
+    padding: 2%;
+}
+
 .card {
     display: flex;
     flex-direction: column;
+    border: 1px solid black;
+    margin-top: 10px;
+    border-radius: 16px;
 }
 
 .content {

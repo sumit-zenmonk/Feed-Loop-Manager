@@ -102,7 +102,7 @@ export default function Page() {
     });
 
   return (
-    <>
+    <Box className={styles.container}>
       <Box sx={{ p: 2, display: "flex", gap: 2 }}>
         <TextField
           size="small"
@@ -255,6 +255,6 @@ export default function Page() {
         onClose={() => setOpenModal(false)}
         onSuccess={refresh}
       />
-    </>
+    </Box>
   )
 }

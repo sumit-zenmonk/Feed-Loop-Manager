@@ -3,6 +3,7 @@
     flex-direction: column;
     width: 100%;
     gap: 2%;
+    padding: 2%;
 }
 
 .card {
@@ -11,6 +12,9 @@
     width: 100%;
     padding: 2%;
     gap: 2%;
+    border: 1px solid black;
+    margin-top: 10px;
+    border-radius: 16px;
 }
 
 .row {

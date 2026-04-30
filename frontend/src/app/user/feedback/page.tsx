@@ -95,7 +95,7 @@ export default function UserFeedbBackPage() {
     }
 
     return (
-        <>
+        <Box className={styles.container}>
             <Button variant="contained" onClick={() => setOpen(true)}>
                 Create Feedback
             </Button>
@@ -227,6 +227,6 @@ export default function UserFeedbBackPage() {
                 onClose={() => setOpen(false)}
                 onSuccess={refresh}
             />
-        </>
+        </Box>
     )
 }
