@@ -38,17 +38,23 @@ export default function NestedComments({
         const build = (parentId: string | null = null): any[] => {
             return all
                 .filter((c) => c.comment_parent_uuid === parentId)
-                .map((c) => ({
-                    userId: String(c.user.uuid),
-                    comId: c.uuid,
-                    fullName: c.user.name,
-                    parentId: c.comment_parent_uuid || null,
-                    text: c.comment,
-                    avatarUrl: 'https://fastly.picsum.photos/id/237/536/354.jpg?hmac=i0yVXW1ORpyCZpQ-CknuyV-jbtU7_x9EBQVhvT5aRr0',
-                    userProfile: "",
-                    timestamp: new Date(c.created_at).toISOString(),
-                    replies: build(c.uuid), // Recursion
-                }));
+                .map((c) => {
+                    const children = build(c.uuid);
+                    return {
+                        userId: String(c.user.uuid),
+                        comId: c.uuid,
+                        fullName: c.user.name,
+                        parentId: c.comment_parent_uuid || null,
+                        text: c.comment,
+                        avatarUrl: 'https://fastly.picsum.photos/id/237/536/354.jpg?hmac=i0yVXW1ORpyCZpQ-CknuyV-jbtU7_x9EBQVhvT5aRr0',
+                        userProfile: "",
+                        timestamp: new Date(c.created_at).toISOString(),
+                        replies: children.flatMap((child: any) => [
+                            child,
+                            ...(child.replies || []),
+                        ]),
+                    }
+                });
         };
         return build(null);
     };
