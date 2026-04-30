@@ -70,6 +70,7 @@ export default function NestedComments({
                 customNoComment={() => customNoComment()}
                 commentData={mapComments(comments)}
                 onSubmitAction={(data: any) => onAdd(data.text, data.parentId || data.replyTo)}
+                onReplyAction={(data: any) => onAdd(data.text, data.repliedToCommentId)}
                 onDeleteAction={(data: any) => onDelete?.(data.comIdToDelete)}
                 onEditAction={(data: any) => onEdit?.(data.comId, data.text)}
                 logIn={{ loginLink: "#", signUpLink: "#" }}
