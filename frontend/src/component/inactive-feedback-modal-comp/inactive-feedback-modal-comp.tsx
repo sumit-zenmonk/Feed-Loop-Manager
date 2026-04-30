@@ -7,6 +7,7 @@ import { RootState } from "@/redux/store"
 import { fetchhiddenFeedbacks, enableDisableFeedback } from "@/redux/feature/admin/user/user-action"
 import { enqueueSnackbar } from "notistack"
 import { useAppDispatch, useAppSelector } from "@/redux/hooks.ts"
+import styles from "./inactive-feedback-modal-comp.module.css"
 
 export default function InactiveFeedbackModal({
     open,
@@ -77,27 +78,27 @@ export default function InactiveFeedbackModal({
                 >
                     <Stack spacing={2}>
                         {hidden_feedbacks && hidden_feedbacks.map((fb: any) => (
-                            <Card key={fb.uuid}>
-                                <CardContent>
-                                    <Box>
+                            <Card key={fb.uuid} className={styles.card}>
+                                <CardContent className={styles.cardContent}>
+
+                                    <Box className={styles.header}>
                                         <Typography variant="h6">{fb.title}</Typography>
-                                        <Typography color="red">Hidden</Typography>
+                                        <Typography className={styles.hiddenText}>
+                                            Hidden
+                                        </Typography>
                                     </Box>
 
-                                    <Typography>{fb.description}</Typography>
+                                    <Typography className={styles.description}>
+                                        {fb.description}
+                                    </Typography>
 
-                                    <Box>
+                                    <Box className={styles.tagsContainer}>
                                         <Typography>Tags:</Typography>
-                                        <Box>
+                                        <Box className={styles.tags}>
                                             {fb.tags.map((tag: any) => (
                                                 <Box
                                                     key={tag.uuid}
-                                                    sx={{
-                                                        px: 1,
-                                                        py: 0.5,
-                                                        bgcolor: "#eee",
-                                                        borderRadius: 1,
-                                                    }}
+                                                    className={styles.tag}
                                                 >
                                                     <Typography>
                                                         {tag.tag_name}
@@ -107,15 +108,20 @@ export default function InactiveFeedbackModal({
                                         </Box>
                                     </Box>
 
-                                    <Box>
+                                    <Box className={styles.footer}>
                                         <Typography>
-                                            Created: {new Date(fb.created_at).toLocaleString()}
+                                            Created:{" "}
+                                            {new Date(
+                                                fb.created_at
+                                            ).toLocaleString()}
                                         </Typography>
 
                                         <Button
                                             variant="contained"
                                             color="success"
-                                            onClick={() => handleEnable(fb.uuid)}
+                                            onClick={() =>
+                                                handleEnable(fb.uuid)
+                                            }
                                         >
                                             Enable
                                         </Button>

@@ -225,17 +225,45 @@ export default function GlobalFeedbackPage() {
                         </Typography>
                     </Box>
 
-                    <Modal open={open} onClose={handleClose} className={styles.modal}>
-                        <Box>
-                            {specific_feedback.votes?.map((vote: any) => (
-                                <Box key={vote.uuid}>
-                                    <Box className={styles.row}>
-                                        <Typography>
-                                            {vote.user.name}
-                                        </Typography>
-                                    </Box>
-                                </Box>
-                            ))}
+                    <Modal
+                        open={open}
+                        onClose={handleClose}
+                    >
+                        <Box className={styles.modalBox}>
+                            <Typography className={styles.modalTitle}>
+                                Voters
+                            </Typography>
+
+                            <Box className={styles.voterList}>
+                                {specific_feedback.votes?.length === 0 ? (
+                                    <Typography className={styles.emptyText}>
+                                        No votes yet
+                                    </Typography>
+                                ) : (
+                                    specific_feedback.votes.map((vote: any) => (
+                                        <Box key={vote.uuid} className={styles.voterRow}>
+                                            <Box>
+                                                <Typography className={styles.voterName}>
+                                                    {vote.user.name}
+                                                </Typography>
+                                                <Typography className={styles.voterEmail}>
+                                                    {vote.user.email}
+                                                </Typography>
+                                            </Box>
+
+                                            <Typography
+                                                className={
+                                                    vote.vote_type === "upvote"
+                                                        ? styles.upvote
+                                                        : styles.devote
+                                                }
+                                            >
+                                                {vote.vote_type}
+                                            </Typography>
+                                        </Box>
+                                    ))
+                                )}
+                            </Box>
                         </Box>
                     </Modal>
 
