@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Button, Card, CardContent, Typography, Stack, Box, TextField } from "@mui/material"
+import { Button, Card, CardContent, Typography, Stack, Box, TextField, Select, MenuItem, InputLabel, FormControl } from "@mui/material"
 import { useAppDispatch, useAppSelector } from "@/redux/hooks.ts"
 import { RootState } from "@/redux/store"
 import { enqueueSnackbar } from "notistack"
@@ -22,7 +22,9 @@ export default function Page() {
   const router = useRouter();
   const [offset, setOffset] = useState(0);
   const limit = 10
-  const [tagFilter, setTagFilter] = useState("")
+  const [textFilter, setTextFilter] = useState("")
+  const [selectedTags, setSelectedTags] = useState<string[]>([])
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc")
   const [userVotes, setUserVotes] = useState<Record<string, FeedbackVoteEnum | undefined>>({});
   const [openModal, setOpenModal] = useState(false);
 
@@ -70,23 +72,68 @@ export default function Page() {
       console.log(`Feedback List Fetching Error`, err);
     }
   }
-  const filteredFeedbacks = tagFilter
-    ? feedbacks.filter((fb: Feedback) =>
-      fb.tags.some((tag: any) =>
-        tag.tag_name.toLowerCase().includes(tagFilter.toLowerCase())
-      )
+
+  const allTags = Array.from(
+    new Set(
+      feedbacks.flatMap((fb: Feedback) => fb.tags.map((t: any) => t.tag_name))
     )
-    : feedbacks
+  );
+
+  const filteredFeedbacks = feedbacks
+    .filter((fb: Feedback) => {
+      if (textFilter) {
+        const text = (fb.title + " " + fb.description).toLowerCase();
+        if (!text.includes(textFilter.toLowerCase())) return false;
+      }
+
+      if (selectedTags.length > 0) {
+        if (!selectedTags.every(tag =>
+          fb.tags.some((t: any) => t.tag_name === tag)
+        )) return false;
+      }
+
+      return true;
+    })
+    .sort((a: Feedback, b: Feedback) => {
+      const scoreA = a.votes.reduce((acc, v) => v.vote_type === FeedbackVoteEnum.UPVOTE ? acc + 1 : v.vote_type === FeedbackVoteEnum.DEVOTE ? acc - 1 : acc, 0);
+      const scoreB = b.votes.reduce((acc, v) => v.vote_type === FeedbackVoteEnum.UPVOTE ? acc + 1 : v.vote_type === FeedbackVoteEnum.DEVOTE ? acc - 1 : acc, 0);
+
+      return sortOrder === "asc" ? scoreA - scoreB : scoreB - scoreA;
+    });
 
   return (
     <>
       <Box sx={{ p: 2, display: "flex", gap: 2 }}>
         <TextField
           size="small"
-          placeholder="Filter by tag"
-          value={tagFilter}
-          onChange={(e) => setTagFilter(e.target.value)}
+          placeholder="Search title/description"
+          value={textFilter}
+          onChange={(e) => setTextFilter(e.target.value)}
         />
+
+        <FormControl size="small" sx={{ minWidth: 150 }}>
+          <InputLabel>Tags</InputLabel>
+          <Select
+            multiple
+            value={selectedTags}
+            onChange={(e) => setSelectedTags(e.target.value as string[])}
+          >
+            {allTags.map(tag => (
+              <MenuItem key={tag} value={tag}>{tag}</MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+
+        <FormControl size="small" sx={{ minWidth: 120 }}>
+          <InputLabel>Sort</InputLabel>
+          <Select
+            value={sortOrder}
+            onChange={(e) => setSortOrder(e.target.value as "asc" | "desc")}
+          >
+            <MenuItem value="desc">Score ↓</MenuItem>
+            <MenuItem value="asc">Score ↑</MenuItem>
+          </Select>
+        </FormControl>
 
         {user?.role == UserRoleEnum.ADMIN && <Button
           variant="outlined"
