@@ -73,6 +73,7 @@ export default function InactiveFeedbackModal({
                     hasMore={hidden_feedbacks?.length < total_hidden_feedbacks}
                     loader={<Typography>Loading...</Typography>}
                     scrollableTarget="scrollableDiv"
+                    endMessage="None feedback left"
                 >
                     <Stack spacing={2}>
                         {hidden_feedbacks && hidden_feedbacks.map((fb: any) => (

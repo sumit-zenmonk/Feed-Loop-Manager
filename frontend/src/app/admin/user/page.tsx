@@ -67,6 +67,7 @@ const UserList = () => {
                 hasMore={users.length < total_users}
                 loader={<h4>Loading...</h4>}
                 height={900}
+                endMessage="None feedback left"
             >
                 {users.map((user: any) => (
                     <Paper key={user.uuid} className={styles.card}>

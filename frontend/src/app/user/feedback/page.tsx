@@ -103,9 +103,10 @@ export default function UserFeedbBackPage() {
             <InfiniteScroll
                 dataLength={feedbacks.length}
                 next={fetchMore}
-                hasMore={feedbacks.length <= total_feedbacks}
+                hasMore={feedbacks.length < total_feedbacks}
                 loader={<h4>Loading...</h4>}
                 height={900}
+                endMessage="None feedback left"
             >
                 {feedbacks?.map((fb: Feedback) => {
                     const myVote =
