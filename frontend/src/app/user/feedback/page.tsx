@@ -106,7 +106,7 @@ export default function UserFeedbBackPage() {
                 hasMore={feedbacks.length < total_feedbacks}
                 loader={<h4>Loading...</h4>}
                 height={900}
-                endMessage="None feedback left"
+                endMessage={<Typography style={{ textAlign: 'center' }}>Yay! You have seen it all</Typography>}
             >
                 {feedbacks?.map((fb: Feedback) => {
                     const myVote =

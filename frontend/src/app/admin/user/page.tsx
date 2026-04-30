@@ -67,7 +67,7 @@ const UserList = () => {
                 hasMore={users.length < total_users}
                 loader={<h4>Loading...</h4>}
                 height={900}
-                endMessage="None User left"
+                endMessage={<Typography style={{ textAlign: 'center' }}>Yay! You have seen it all</Typography>}
             >
                 {users.map((user: any) => (
                     <Paper key={user.uuid} className={styles.card}>
@@ -81,9 +81,15 @@ const UserList = () => {
                             </Typography>
                         </Box>
 
-                        <Typography className={styles.email}>
-                            {user.email}
-                        </Typography>
+                        <Box className={styles.row}>
+                            <Typography className={styles.email}>
+                                {user.email}
+                            </Typography>
+
+                            <Typography className={user.is_disabled_by_admin ? styles.disabledStatus : styles.activeStatus}>
+                                {user.is_disabled_by_admin ? "Disabled-Status" : "Active-Status"}
+                            </Typography>
+                        </Box>
 
                         <Box className={styles.row}>
                             <Typography>
@@ -102,7 +108,7 @@ const UserList = () => {
                 ))}
 
             </InfiniteScroll>
-        </Box>
+        </Box >
     )
 }
 

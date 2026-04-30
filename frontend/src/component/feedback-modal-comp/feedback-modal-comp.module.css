@@ -1,0 +1,56 @@
+.container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.containerContent {
+    display: flex;
+    flex-direction: column;
+    width: 500px;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.stack {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 16px;
+}
+
+.field {
+    width: 100%;
+    background: #ffffff;
+    border-radius: 16px;
+}
+
+.buttonWrapper {
+    display: flex;
+    width: 100%;
+    justify-content: flex-end;
+    margin-top: 10px;
+}
+
+.button {
+    width: 35%;
+    min-width: 120px;
+    color: #ffffff;
+    font-weight: 600;
+    border-radius: 8px;
+    padding: 10px 0;
+    text-transform: none;
+    transition: all 0.3s ease;
+}
+
+.button:hover {
+    transform: translateY(-1px);
+}
+
+.button:active {
+    transform: scale(0.98);
+}
