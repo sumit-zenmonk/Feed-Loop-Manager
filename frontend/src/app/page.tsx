@@ -130,8 +130,8 @@ export default function Page() {
             value={sortOrder}
             onChange={(e) => setSortOrder(e.target.value as "asc" | "desc")}
           >
-            <MenuItem value="desc">Score ↓</MenuItem>
-            <MenuItem value="asc">Score ↑</MenuItem>
+            <MenuItem value="desc">Desc</MenuItem>
+            <MenuItem value="asc">Asc</MenuItem>
           </Select>
         </FormControl>
 
