@@ -103,7 +103,7 @@ export default function Page() {
 
   return (
     <Box className={styles.container}>
-      <Box sx={{ p: 2, display: "flex", gap: 2 }}>
+      <Box className={styles.filterBox}>
         <TextField
           size="small"
           placeholder="Search title/description"
