@@ -2,11 +2,13 @@
 
 import { createSlice } from "@reduxjs/toolkit"
 import { UserState } from "./user-type"
-import { enableDisableUser, fetchUsers, fetchhiddenFeedbacks } from "./user-action"
+import { enableDisableUser, fetchDeletedFeedbacks, fetchUsers, fetchhiddenFeedbacks } from "./user-action"
 
 const initialState: UserState = {
     hidden_feedbacks: [],
     total_hidden_feedbacks: 0,
+    deleted_feedbacks: [],
+    total_deleted_feedbacks: 0,
     users: [],
     total_users: 0,
     loading: false,
@@ -67,6 +69,18 @@ const userSlice = createSlice({
                     )
                 }
                 state.total_hidden_feedbacks = action.payload.total
+            })
+            .addCase(fetchDeletedFeedbacks.fulfilled, (state, action) => {
+                const newFeedbacks = action.payload.feedbacks
+                if (action.meta.arg.offset === 0) {
+                    state.deleted_feedbacks = newFeedbacks
+                } else {
+                    const merged = [...state.deleted_feedbacks, ...newFeedbacks]
+                    state.deleted_feedbacks = Array.from(
+                        new Map(merged.map(fb => [fb.uuid, fb])).values()
+                    )
+                }
+                state.total_deleted_feedbacks = action.payload.total
             })
     },
 })

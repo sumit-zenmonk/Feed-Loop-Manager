@@ -20,4 +20,9 @@ export class AdminFeedbackController {
     async gethiddenFeedbacks(@Req() req: Request, @Query('offset') offset?: number, @Query('limit') limit?: number) {
         return this.adminFeedbackService.gethiddenFeedbacks(req.user, offset, limit);
     }
+
+    @Get('/delete')
+    async getDeletedFeedbacks(@Req() req: Request, @Query('offset') offset?: number, @Query('limit') limit?: number) {
+        return this.adminFeedbackService.getDeletedFeedbacks(req.user, offset, limit);
+    }
 }

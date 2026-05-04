@@ -131,3 +131,36 @@ export const fetchhiddenFeedbacks = createAsyncThunk<
         }
     }
 )
+
+export const fetchDeletedFeedbacks = createAsyncThunk<
+    FetchhiddenFeedbackResponse,
+    { offset?: number; limit?: number },
+    { state: RootState }
+>(
+    "admin/deleted/feedbacks/fetch",
+    async ({ offset = 0, limit = 10 }, { getState, rejectWithValue }) => {
+        try {
+            const token = getState().authReducer.token || ""
+
+            const res = await fetch(
+                `${API_URL}/admin/feedback/delete?offset=${offset}&limit=${limit}`,
+                {
+                    method: "GET",
+                    headers: {
+                        Authorization: `${token}`,
+                    },
+                }
+            )
+
+            const data = await res.json()
+            if (!res.ok) throw new Error(data.message)
+
+            return {
+                feedbacks: data.data,
+                total: data.totalDocuments,
+            }
+        } catch (err: any) {
+            return rejectWithValue(err.message)
+        }
+    }
+)

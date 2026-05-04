@@ -42,6 +42,8 @@ export interface FetchhiddenFeedbackResponse {
 export interface UserState {
     hidden_feedbacks: Feedback[]
     total_hidden_feedbacks: number
+    deleted_feedbacks: Feedback[]
+    total_deleted_feedbacks: number
     users: User[]
     total_users: number
     loading: boolean

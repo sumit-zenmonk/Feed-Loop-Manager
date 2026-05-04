@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { FeedbackEntity } from "src/domain/entities/feedback/feedback.entity";
 import { UserEntity } from "src/domain/entities/user/user.entity";
 import { FeedbackStatusEnum } from "src/domain/enums/feedback";
-import { DataSource, Not, Repository } from "typeorm";
+import { DataSource, IsNull, Not, Repository } from "typeorm";
 
 @Injectable()
 export class FeedbackRepository extends Repository<FeedbackEntity> {
@@ -109,6 +109,28 @@ export class FeedbackRepository extends Repository<FeedbackEntity> {
                 disabled_by_admin_uuid: admin.uuid,
                 is_disabled_by_admin: true
             },
+            relations: {
+                comments: {
+                    user: true,
+                    parent: true,
+                    feedback: true,
+                },
+                creator: true,
+                votes: true,
+                tags: true,
+                disabled_by_admin: true
+            },
+            skip: offset ?? Number(process.env.page_offset) ?? 0,
+            take: limit ?? Number(process.env.page_limit) ?? 10
+        });
+    }
+
+    async getDeletedFeedbacks(admin: UserEntity, offset?: number, limit?: number) {
+        return await this.findAndCount({
+            where: {
+                deleted_at: Not(IsNull())
+            },
+            withDeleted: true,
             relations: {
                 comments: {
                     user: true,
