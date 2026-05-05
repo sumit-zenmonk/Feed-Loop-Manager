@@ -14,6 +14,7 @@ import { UserRoleEnum } from "@/enums/user"
 import InfiniteScroll from "react-infinite-scroll-component"
 import { FeedbackVoteEnum } from "@/enums/feedback";
 import InactiveFeedbackModal from "@/component/inactive-feedback-modal-comp/inactive-feedback-modal-comp";
+import DeletedFeedbackModal from "@/component/deleted-feedback-modal-comp/deleted-feedback-modal-comp";
 
 export default function Page() {
   const dispatch = useAppDispatch()
@@ -27,6 +28,7 @@ export default function Page() {
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc")
   const [userVotes, setUserVotes] = useState<Record<string, FeedbackVoteEnum | undefined>>({});
   const [openModal, setOpenModal] = useState(false);
+  const [openDeletedModal, setOpenDeletedModal] = useState(false);
 
   useEffect(() => {
     refresh()
@@ -137,13 +139,23 @@ export default function Page() {
         </FormControl>
 
         {user?.role == UserRoleEnum.ADMIN &&
-          <Button
-            variant="outlined"
-            onClick={() => setOpenModal(true)}
-            className={styles.filterBoxField}
-          >
-            View Hidden Feedbacks
-          </Button>}
+          <>
+            <Button
+              variant="outlined"
+              onClick={() => setOpenModal(true)}
+              className={styles.filterBoxField}
+            >
+              View Hidden Feedbacks
+            </Button>
+
+            <Button
+              variant="outlined"
+              onClick={() => setOpenDeletedModal(true)}
+              className={styles.filterBoxField}
+            >
+              View Deleted Feedbacks
+            </Button>
+          </>}
       </Box>
 
       <InfiniteScroll
@@ -257,6 +269,11 @@ export default function Page() {
         open={openModal}
         onClose={() => setOpenModal(false)}
         onSuccess={refresh}
+      />
+
+      <DeletedFeedbackModal
+        open={openDeletedModal}
+        onClose={() => setOpenDeletedModal(false)}
       />
     </Box>
   )
